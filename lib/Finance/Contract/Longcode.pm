@@ -101,10 +101,9 @@ sub shortcode_to_longcode {
         my $interval_string = Time::Duration::Concise->new(interval => $date_expiry->epoch - $date_start->epoch)->as_string;
         my @strings;
         my @durations;
-        foreach my $b ('hour', 'minute', 'second') {
-            $DB::single=1;
+        foreach my $interval ('hour', 'minute', 'second') {
             if ($interval_string =~ /(\d+)\s$b/) {
-                push @strings,   $b;
+                push @strings,   $interval;
                 push @durations, $1;
             }
         }
