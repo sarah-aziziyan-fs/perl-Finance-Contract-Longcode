@@ -102,6 +102,7 @@ sub shortcode_to_longcode {
         my @strings;
         my @durations;
         foreach my $b ('hour', 'minute', 'second') {
+            $DB::single=1;
             if ($interval_string =~ /(\d+)\s$b/) {
                 push @strings,   $b;
                 push @durations, $1;
