@@ -98,7 +98,10 @@ sub shortcode_to_longcode {
     if ($expiry_type eq 'intraday_fixed_expiry') {
         $when_end = [$date_expiry->datetime . ' GMT'];
     } elsif ($expiry_type eq 'intraday') {
-        $when_end = Time::Duration::Concise::Localize->new(interval => $date_expiry->epoch - $date_start->epoch);
+        $when_end = {
+            class => 'Time::Duration::Concise::Localize',
+            value => $date_expiry->epoch - $date_start->epoch
+        };
         $when_start = ($is_forward_starting) ? [$date_start->db_timestamp . ' GMT'] : [$LONGCODES->{contract_start_time}];
     } elsif ($expiry_type eq 'daily') {
         $when_end = [$LONGCODES->{close_on}, $date_expiry->date];
