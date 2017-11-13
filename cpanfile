@@ -1,5 +1,5 @@
 requires 'Finance::Contract',   '>= 0.010';
-requires 'Time::Duration::Concise';
+requires 'Time::Duration::Concise::Localize';
 requires 'Format::Util::Numbers';
 requires 'Exporter';
 requires 'Date::Utility';
