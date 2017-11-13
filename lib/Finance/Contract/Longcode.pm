@@ -98,7 +98,18 @@ sub shortcode_to_longcode {
     if ($expiry_type eq 'intraday_fixed_expiry') {
         $when_end = [$date_expiry->datetime . ' GMT'];
     } elsif ($expiry_type eq 'intraday') {
-        $when_end = [Time::Duration::Concise->new(interval => $date_expiry->epoch - $date_start->epoch)->as_string];
+        my $interval_string = Time::Duration::Concise->new(interval => $date_expiry->epoch - $date_start->epoch)->as_string;
+        my @strings;
+        my @durations;
+        foreach my $b ('hour', 'minute', 'second') {
+            if ($interval_string =~ /(\d+)\s$b/) {
+                push @strings,   $b;
+                push @durations, $1;
+            }
+        }
+
+        my $intraday_duration_key = join '_', @strings, 'plural';
+        $when_end = [$LONGCODES->{$intraday_duration_key}, @durations];
         $when_start = ($is_forward_starting) ? [$date_start->db_timestamp . ' GMT'] : [$LONGCODES->{contract_start_time}];
     } elsif ($expiry_type eq 'daily') {
         $when_end = [$LONGCODES->{close_on}, $date_expiry->date];
