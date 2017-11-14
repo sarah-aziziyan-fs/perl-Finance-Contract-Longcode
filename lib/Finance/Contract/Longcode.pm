@@ -41,7 +41,7 @@ use Finance::Underlying;
 use Finance::Asset;
 use Format::Util::Numbers qw(formatnumber);
 use Scalar::Util qw(looks_like_number);
-use Time::Duration::Concise;
+use Time::Duration::Concise::Localize;
 use YAML::XS qw(LoadFile);
 
 our @EXPORT_OK = qw(shortcode_to_longcode shortcode_to_parameters get_longcodes);
@@ -102,7 +102,10 @@ sub shortcode_to_longcode {
     if ($expiry_type eq 'intraday_fixed_expiry') {
         $when_end = [$date_expiry->datetime . ' GMT'];
     } elsif ($expiry_type eq 'intraday') {
-        $when_end = [Time::Duration::Concise->new(interval => $date_expiry->epoch - $date_start->epoch)->as_string];
+        $when_end = {
+            class => 'Time::Duration::Concise::Localize',
+            value => $date_expiry->epoch - $date_start->epoch
+        };
         $when_start = ($is_forward_starting) ? [$date_start->db_timestamp . ' GMT'] : [$LONGCODES->{contract_start_time}];
     } elsif ($expiry_type eq 'daily') {
         $when_end = [$LONGCODES->{close_on}, $date_expiry->date];
