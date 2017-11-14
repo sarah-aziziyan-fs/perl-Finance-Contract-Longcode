@@ -76,6 +76,10 @@ sub shortcode_to_longcode {
 
     my $params = shortcode_to_parameters($shortcode);
 
+    if ($params->{bet_type} eq 'Invalid') {
+        return $LONGCODES->{legacy_contract};
+    }
+
     if ($params->{bet_type} !~ /ico/i && !(defined $params->{date_expiry} || defined $params->{tick_count})) {
         die 'Invalid shortcode. No expiry is specified.';
     }
