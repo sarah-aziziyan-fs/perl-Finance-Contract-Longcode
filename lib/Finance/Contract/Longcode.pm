@@ -187,7 +187,7 @@ sub shortcode_to_parameters {
             $tick_expiry    = 1;
             $how_many_ticks = $5;
         }
-    } elsif ($shortcode =~ /^BINARYICO_(\d+\.?\d*)_(\d+)(?:_(\d)+)$/) {
+    } elsif ($shortcode =~ /^BINARYICO_(\d+\.?\d*)_(\d+)(?:_(\d)+)?$/) {
         $bet_type                      = 'BINARYICO';
         $underlying_symbol             = 'BINARYICO';
         $binaryico_per_token_bid_price = $1;
