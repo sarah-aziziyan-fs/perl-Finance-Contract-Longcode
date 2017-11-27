@@ -232,7 +232,8 @@ sub shortcode_to_parameters {
     # List of lookbacks
     my $nonbinary_list = 'LBFIXEDCALL|LBFIXEDPUT|LBFLOATCALL|LBFLOATPUT|LBHIGHLOW';
     if ($bet_type =~ /$nonbinary_list/) {
-        $bet_parameters->{unit} = $payout;
+        $bet_parameters->{unit}                = $payout;
+        $bet_parameters->{contract_multiplier} = $contract_multiplier;
     }
 
     # ICO
