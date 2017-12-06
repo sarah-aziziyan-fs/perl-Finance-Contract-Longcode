@@ -127,7 +127,9 @@ sub shortcode_to_longcode {
         push @longcode, [$underlying->pip_size];
     }
 
-    push @longcode, $params->{contract_multiplier};
+    if ($params->{contract_multiplier}) {
+        push @longcode, $params->{contract_multiplier};
+    }
 
     return \@longcode;
 }
