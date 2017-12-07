@@ -169,7 +169,7 @@ sub shortcode_to_parameters {
         $payout            = $3;
         $date_start        = $4;
         $forward_start     = 1 if $+{start_cond} eq 'F';
-        $product_type      = 'multibarrier' if $+{start_cond} eq 'P';
+        $product_type      = 'multi_barrier' if $+{start_cond} eq 'P';
         $barrier           = $8;
         $barrier2          = $9;
         $fixed_expiry      = 1 if $+{expiry_cond} eq 'F';
