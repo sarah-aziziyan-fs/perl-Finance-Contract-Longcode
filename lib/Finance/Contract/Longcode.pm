@@ -167,7 +167,7 @@ sub shortcode_to_parameters {
     return $legacy_params if (not exists Finance::Contract::Category::get_all_contract_types()->{$initial_bet_type} or $shortcode =~ /_\d+H\d+/);
 
     if ($shortcode =~
-        /^([^_]+)_([\w\d]+)_(\d*\.?\d*)_(\d+)(?<start_cond>[F]?)_(\d+)(?<expiry_cond>[FT]?)_(S?-?\d+P?)_(S?-?\d+P?)(?:_(?<window_start>\d+))?$/)
+        /^([^_]+)_([\w\d]+)_(\d*\.?\d*)_(\d+)(?<start_cond>[F]?)_(\d+)(?<expiry_cond>[FT]?)_(S?-?\d+P?)_(S?-?\d+P?)(?:_P(?<window_start>\d+))?$/)
     {                               # Both purchase and expiry date are timestamp (e.g. a 30-min bet)
         $bet_type          = $1;
         $underlying_symbol = $2;
