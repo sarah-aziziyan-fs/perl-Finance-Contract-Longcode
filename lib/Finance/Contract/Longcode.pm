@@ -240,7 +240,7 @@ sub shortcode_to_parameters {
 
     if ($product_type && $product_type eq 'multi_barrier') {
         $bet_parameters->{product_type}         = $product_type;
-        $bet_parameters->{trading_window_start} = $trading_window_start;
+        $bet_parameters->{trading_period_start} = $trading_window_start;
     }
 
     # List of lookbacks
