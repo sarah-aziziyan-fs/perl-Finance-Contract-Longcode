@@ -58,8 +58,6 @@ range_intraday_fixed_expiry: 'Win payout if [_1] stays between [_5] to [_4] thro
 upordown_daily: 'Win payout if [_1] goes outside [_5] to [_4] through [_3].'
 upordown_intraday: 'Win payout if [_1] goes outside [_5] and [_4] through [_3] after [_2].'
 upordown_intraday_fixed_expiry: 'Win payout if [_1] goes outside [_5] to [_4] through [_3].'
-lbfixedcall_intraday: "Receive the difference of [_1]'s maximum value during the life of the option and [_4] at [_3] after [_2]."
-lbfixedput_intraday: "Receive the difference of [_4] and [_1]'s minimum value during the life of the option at [_3] after [_2].'"
-lbfloatcall_intraday: "Receive the difference of [_1]'s final value and its minimum value during the life of the option at [_3] after [_2]."
-lbfloatput_intraday: "Receive the difference of [_1]'s maximum value during the life of the option and its final value at [_3] after [_2]."
-lbhighlow_intraday: "Receive the difference of [_1]'s maximum and minimum value during the life of the option at [_3] after [_2]."
+lbfloatcall_intraday: "Receive [_5] per point difference between [_1]'s exit spot and lowest value at [_3] after [_2]."
+lbfloatput_intraday: "Receive [_5] per point difference between [_1]'s highest value and exit spot at [_3] after [_2]."
+lbhighlow_intraday: "Receive [_5] per point difference between [_1]'s highest and lowest values at [_3] after [_2]."
