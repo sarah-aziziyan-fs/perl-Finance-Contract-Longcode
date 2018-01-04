@@ -188,12 +188,14 @@ sub shortcode_to_parameters {
             $date_expiry = $6;
         }
 
-        # predefined trading window start
-        if ($+{extra} eq 'P') {
-            $product_type         = 'multi_barrier';
-            $trading_window_start = $10;
-        } elsif ($+{extra} eq 'M') {    # multiplier for lookback contracts
-            $contract_multiplier = $10;
+        if ($+{extra}) {
+            # predefined trading window start
+            if ($+{extra} eq 'P') {
+                $product_type         = 'multi_barrier';
+                $trading_window_start = $10;
+            } elsif ($+{extra} eq 'M') {    # multiplier for lookback contracts
+                $contract_multiplier = $10;
+            }
         }
     } elsif ($shortcode =~ /^([^_]+)_(R?_?[^_\W]+)_(\d*\.?\d*)_(\d+)_(\d+)(?<expiry_cond>[T]?)$/) {    # Contract without barrier
         $bet_type          = $1;
