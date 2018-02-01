@@ -72,7 +72,7 @@ Returns an array reference of strings.
 =cut
 
 sub shortcode_to_longcode {
-    my ($shortcode) = @_;
+    my ($shortcode, $currency) = @_;
 
     my $params = shortcode_to_parameters($shortcode);
 
@@ -131,8 +131,8 @@ sub shortcode_to_longcode {
         push @longcode, $params->{contract_multiplier};
     }
 
-    if ($params->{currency}) {
-        push @longcode, $params->{currency};
+    if ($currency) {
+        push @longcode, $currency;
     }
 
     return \@longcode;

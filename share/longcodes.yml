@@ -61,6 +61,6 @@ upordown_intraday_fixed_expiry: 'Win payout if [_1] goes outside [_5] to [_4] th
 lbfloatcall_intraday: "Win [_6][_5] times [_1]’s close-low over the next [_3]."
 lbfloatcall_intraday_fixed_expiry: "Win [_6][_5] times [_1]’s close-low at [_3]."
 lbfloatput_intraday: "Win [_6][_5] times [_1]’s high-close over the next [_3]."
-lbfloatput_intraday_fixed_expiry: "Win [_6][_5] times [_1]’s high-close over at [_3]."
+lbfloatput_intraday_fixed_expiry: "Win [_6][_5] times [_1]’s high-close at [_3]."
 lbhighlow_intraday: "Win [_6][_5] times [_1]’s high-low over the next [_3]."
 lbhighlow_intraday_fixed_expiry: "Win [_6][_5] times [_1]’s high-low at [_3]."
