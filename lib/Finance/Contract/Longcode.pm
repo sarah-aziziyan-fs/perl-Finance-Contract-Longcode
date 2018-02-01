@@ -132,7 +132,7 @@ sub shortcode_to_longcode {
     }
 
     if ($params->{currency}) {
-	push @longcode, $params->{currency};
+        push @longcode, $params->{currency};
     }
 
     return \@longcode;
