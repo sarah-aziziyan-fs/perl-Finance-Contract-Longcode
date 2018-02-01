@@ -131,6 +131,10 @@ sub shortcode_to_longcode {
         push @longcode, $params->{contract_multiplier};
     }
 
+    if ($params->{currency}) {
+	push @longcode, $params->{currency};
+    }
+
     return \@longcode;
 }
 
