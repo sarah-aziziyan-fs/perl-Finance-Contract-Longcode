@@ -127,11 +127,8 @@ sub shortcode_to_longcode {
         push @longcode, [$underlying->pip_size];
     }
 
-    if ($params->{contract_multiplier}) {
+    if ($params->{contract_multiplier} and $currency) {
         push @longcode, $params->{contract_multiplier};
-    }
-
-    if ($currency) {
         push @longcode, $currency;
     }
 
