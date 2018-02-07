@@ -9,6 +9,10 @@ our $VERSION = '0.001';
 
 Finance::Contract::Longcode - contains utility functions to convert a binary.com's shortcode to human readable longcode and shortcode to a hash reference parameters.
 
+=head1 VERSION
+
+version 0.001
+
 =head1 SYNOPSIS
 
     use Finance::Contract::Longcode qw(shortcode_to_longcode);
@@ -127,8 +131,8 @@ sub shortcode_to_longcode {
         push @longcode, [$underlying->pip_size];
     }
 
-    if ($params->{contract_multiplier} and $params->{unit} and $currency) {
-        push @longcode, $params->{contract_multiplier} * $params->{unit};
+    if ($params->{multiplier} and $currency) {
+        push @longcode, $params->{multiplier};
         push @longcode, $currency;
     }
 
@@ -167,8 +171,16 @@ sub shortcode_to_parameters {
 
     return $legacy_params if (not exists Finance::Contract::Category::get_all_contract_types()->{$initial_bet_type} or $shortcode =~ /_\d+H\d+/);
 
-    if ($shortcode =~ /^([^_]+)_([\w\d]+)_(\d*\.?\d*)_(\d+)(?<start_cond>F?)_(\d+)(?<expiry_cond>[FT]?)_(S?-?\d+P?)_(S?-?\d+P?)(?:_(\d*\.\d+))?$/)
-    {                               # Both purchase and expiry date are timestamp (e.g. a 30-min bet)
+    if ($shortcode =~ /^([^_]+)_([\w\d]+)_(\d*\.?\d*)_(\d+)(?<start_cond>F?)_(\d+)(?<expiry_cond>[FT]?)$/) {
+        $bet_type            = $1;
+        $underlying_symbol   = $2;
+        $contract_multiplier = $3;
+        $date_start          = $4;
+        $fixed_expiry        = 1 if $+{expiry_cond} eq 'F';
+        $date_expiry         = $6;
+    } elsif (
+        $shortcode =~ /^([^_]+)_([\w\d]+)_(\d*\.?\d*)_(\d+)(?<start_cond>F?)_(\d+)(?<expiry_cond>[FT]?)_(S?-?\d+P?)_(S?-?\d+P?)(?:_(\d*\.\d+))?$/)
+    {    # Both purchase and expiry date are timestamp (e.g. a 30-min bet)
         $bet_type          = $1;
         $underlying_symbol = $2;
         $payout            = $3;
@@ -177,6 +189,7 @@ sub shortcode_to_parameters {
         $barrier           = $8;
         $barrier2          = $9;
         $fixed_expiry      = 1 if $+{expiry_cond} eq 'F';
+
         if ($+{expiry_cond} eq 'T') {
             $tick_expiry    = 1;
             $how_many_ticks = $6;
@@ -235,10 +248,10 @@ sub shortcode_to_parameters {
     };
 
     # List of lookbacks
-    my $nonbinary_list = 'LBFIXEDCALL|LBFIXEDPUT|LBFLOATCALL|LBFLOATPUT|LBHIGHLOW';
+    my $nonbinary_list = 'LBFLOATCALL|LBFLOATPUT|LBHIGHLOW';
     if ($bet_type =~ /$nonbinary_list/) {
-        $bet_parameters->{unit}                = $payout;
-        $bet_parameters->{contract_multiplier} = $contract_multiplier;
+        #    $bet_parameters->{contract_multiplier} = $contract_multiplier;
+        $bet_parameters->{multiplier} = $contract_multiplier;
     }
 
     # ICO
