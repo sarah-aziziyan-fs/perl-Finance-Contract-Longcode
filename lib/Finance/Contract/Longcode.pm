@@ -9,10 +9,6 @@ our $VERSION = '0.001';
 
 Finance::Contract::Longcode - contains utility functions to convert a binary.com's shortcode to human readable longcode and shortcode to a hash reference parameters.
 
-=head1 VERSION
-
-version 0.001
-
 =head1 SYNOPSIS
 
     use Finance::Contract::Longcode qw(shortcode_to_longcode);
@@ -171,16 +167,8 @@ sub shortcode_to_parameters {
 
     return $legacy_params if (not exists Finance::Contract::Category::get_all_contract_types()->{$initial_bet_type} or $shortcode =~ /_\d+H\d+/);
 
-    if ($shortcode =~ /^([^_]+)_([\w\d]+)_(\d*\.?\d*)_(\d+)(?<start_cond>F?)_(\d+)(?<expiry_cond>[FT]?)$/) {
-        $bet_type            = $1;
-        $underlying_symbol   = $2;
-        $contract_multiplier = $3;
-        $date_start          = $4;
-        $fixed_expiry        = 1 if $+{expiry_cond} eq 'F';
-        $date_expiry         = $6;
-    } elsif (
-        $shortcode =~ /^([^_]+)_([\w\d]+)_(\d*\.?\d*)_(\d+)(?<start_cond>F?)_(\d+)(?<expiry_cond>[FT]?)_(S?-?\d+P?)_(S?-?\d+P?)(?:_(\d*\.\d+))?$/)
-    {    # Both purchase and expiry date are timestamp (e.g. a 30-min bet)
+    if ($shortcode =~ /^([^_]+)_([\w\d]+)_(\d*\.?\d*)_(\d+)(?<start_cond>F?)_(\d+)(?<expiry_cond>[FT]?)_(S?-?\d+P?)_(S?-?\d+P?)(?:_(\d*\.\d+))?$/)
+    {                               # Both purchase and expiry date are timestamp (e.g. a 30-min bet)
         $bet_type          = $1;
         $underlying_symbol = $2;
         $payout            = $3;
@@ -197,11 +185,13 @@ sub shortcode_to_parameters {
             $date_expiry = $6;
         }
         $contract_multiplier = $10;
-    } elsif ($shortcode =~ /^([^_]+)_(R?_?[^_\W]+)_(\d*\.?\d*)_(\d+)_(\d+)(?<expiry_cond>[T]?)$/) {    # Contract without barrier
-        $bet_type          = $1;
-        $underlying_symbol = $2;
-        $payout            = $3;
-        $date_start        = $4;
+    } elsif ($shortcode =~ /^([^_]+)_(R?_?[^_\W]+)_(\d*\.?\d*)_(\d+)_(\d+)(?<expiry_cond>[FT]?)$/) {    # Contract without barrier
+        $bet_type            = $1;
+        $underlying_symbol   = $2;
+        $contract_multiplier = $payout = $3;
+        $date_start          = $4;
+        $fixed_expiry        = 1 if $+{expiry_cond} eq 'F';
+        $date_expiry         = $5;
         if ($+{expiry_cond} eq 'T') {
             $tick_expiry    = 1;
             $how_many_ticks = $5;
