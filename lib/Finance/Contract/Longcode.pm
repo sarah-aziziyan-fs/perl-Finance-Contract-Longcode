@@ -199,7 +199,7 @@ sub shortcode_to_parameters {
                 $contract_multiplier = $11;
             }
         }
-    } elsif ($shortcode =~ /^([^_]+)_(R?_?[^_\W]+)_(\d*\.?\d*)_(\d+)_(\d+)(?<expiry_cond>[T]?)$/) {    # Contract without barrier
+    } elsif ($shortcode =~ /^([^_]+)_(R?_?[^_\W]+)_(\d*\.?\d*)_(\d+)_(\d+)(?<expiry_cond>[FT]?)$/) {    # Contract without barrier
         $bet_type            = $1;
         $underlying_symbol   = $2;
         $contract_multiplier = $payout = $3;
