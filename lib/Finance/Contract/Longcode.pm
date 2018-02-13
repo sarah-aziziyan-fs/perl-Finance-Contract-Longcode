@@ -190,11 +190,12 @@ sub shortcode_to_parameters {
         $underlying_symbol   = $2;
         $contract_multiplier = $payout = $3;
         $date_start          = $4;
-        $fixed_expiry        = 1 if $+{expiry_cond} eq 'F';
-        $date_expiry         = $5;
         if ($+{expiry_cond} eq 'T') {
             $tick_expiry    = 1;
             $how_many_ticks = $5;
+        } elsif (if $+{expiry_cond} eq 'F') {
+            $fixed_expiry = 1;
+            $date_expiry  = $5;
         }
     } elsif ($shortcode =~ /^BINARYICO_(\d+\.?\d*)_(\d+)(?:_(\d)+)?$/) {
         $bet_type                      = 'BINARYICO';
