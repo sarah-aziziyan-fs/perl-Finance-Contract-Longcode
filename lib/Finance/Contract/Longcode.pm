@@ -193,7 +193,7 @@ sub shortcode_to_parameters {
         if ($+{expiry_cond} eq 'T') {
             $tick_expiry    = 1;
             $how_many_ticks = $5;
-        } elsif (if $+{expiry_cond} eq 'F') {
+        } elsif ($+{expiry_cond} eq 'F') {
             $fixed_expiry = 1;
             $date_expiry  = $5;
         }
