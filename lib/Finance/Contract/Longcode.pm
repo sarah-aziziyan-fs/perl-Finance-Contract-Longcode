@@ -153,9 +153,13 @@ sub shortcode_to_parameters {
 
     $is_sold //= 0;
 
-    my ($bet_type, $underlying_symbol, $payout, $date_start, $date_expiry, $barrier, $barrier2, $prediction, $fixed_expiry, $tick_expiry,
-        $how_many_ticks, $forward_start, $binaryico_per_token_bid_price,
-        $binaryico_number_of_tokens, $binaryico_deposit_percentage, $contract_multiplier);
+    my (
+        $bet_type,                      $underlying_symbol,          $payout,                       $date_start,
+        $date_expiry,                   $barrier,                    $barrier2,                     $prediction,
+        $fixed_expiry,                  $tick_expiry,                $how_many_ticks,               $forward_start,
+        $binaryico_per_token_bid_price, $binaryico_number_of_tokens, $binaryico_deposit_percentage, $contract_multiplier,
+        $product_type,                  $trading_window_start
+    );
 
     my ($initial_bet_type) = split /_/, $shortcode;
 
@@ -167,7 +171,8 @@ sub shortcode_to_parameters {
 
     return $legacy_params if (not exists Finance::Contract::Category::get_all_contract_types()->{$initial_bet_type} or $shortcode =~ /_\d+H\d+/);
 
-    if ($shortcode =~ /^([^_]+)_([\w\d]+)_(\d*\.?\d*)_(\d+)(?<start_cond>F?)_(\d+)(?<expiry_cond>[FT]?)_(S?-?\d+P?)_(S?-?\d+P?)(?:_(\d*\.\d+))?$/)
+    if ($shortcode =~
+        /^([^_]+)_([\w\d]+)_(\d*\.?\d*)_(\d+)(?<start_cond>[F]?)_(\d+)(?<expiry_cond>[FT]?)_(S?-?\d+P?)_(S?-?\d+P?)(?:_(?<extra>[PM])(\d*\.?\d+))?$/)
     {                               # Both purchase and expiry date are timestamp (e.g. a 30-min bet)
         $bet_type          = $1;
         $underlying_symbol = $2;
@@ -184,8 +189,17 @@ sub shortcode_to_parameters {
         } else {
             $date_expiry = $6;
         }
-        $contract_multiplier = $10;
-    } elsif ($shortcode =~ /^([^_]+)_(R?_?[^_\W]+)_(\d*\.?\d*)_(\d+)_(\d+)(?<expiry_cond>[FT]?)$/) {    # Contract without barrier
+
+        if ($+{extra}) {
+            # predefined trading window start
+            if ($+{extra} eq 'P') {
+                $product_type         = 'multi_barrier';
+                $trading_window_start = $11;
+            } elsif ($+{extra} eq 'M') {    # multiplier for lookback contracts
+                $contract_multiplier = $11;
+            }
+        }
+    } elsif ($shortcode =~ /^([^_]+)_(R?_?[^_\W]+)_(\d*\.?\d*)_(\d+)_(\d+)(?<expiry_cond>[T]?)$/) {    # Contract without barrier
         $bet_type            = $1;
         $underlying_symbol   = $2;
         $contract_multiplier = $payout = $3;
@@ -239,6 +253,11 @@ sub shortcode_to_parameters {
         ($forward_start) ? (starts_as_forward_starting => $forward_start) : (),
         %barriers,
     };
+
+    if ($product_type && $product_type eq 'multi_barrier') {
+        $bet_parameters->{product_type}         = $product_type;
+        $bet_parameters->{trading_period_start} = $trading_window_start;
+    }
 
     # List of lookbacks
     my $nonbinary_list = 'LBFLOATCALL|LBFLOATPUT|LBHIGHLOW';
