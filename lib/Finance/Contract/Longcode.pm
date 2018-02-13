@@ -196,6 +196,8 @@ sub shortcode_to_parameters {
         } elsif ($+{expiry_cond} eq 'F') {
             $fixed_expiry = 1;
             $date_expiry  = $5;
+        } else {
+            $date_expiry = $5;
         }
     } elsif ($shortcode =~ /^BINARYICO_(\d+\.?\d*)_(\d+)(?:_(\d)+)?$/) {
         $bet_type                      = 'BINARYICO';
