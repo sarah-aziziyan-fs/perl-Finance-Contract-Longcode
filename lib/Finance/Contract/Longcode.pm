@@ -153,11 +153,9 @@ sub shortcode_to_parameters {
     $is_sold //= 0;
 
     my (
-        $bet_type,                      $underlying_symbol,          $payout,                       $date_start,
-        $date_expiry,                   $barrier,                    $barrier2,                     $prediction,
-        $fixed_expiry,                  $tick_expiry,                $how_many_ticks,               $forward_start,
-        $contract_multiplier,
-        $product_type,                  $trading_window_start
+        $bet_type,       $underlying_symbol, $payout,              $date_start,   $date_expiry,
+        $barrier,        $barrier2,          $prediction,          $fixed_expiry, $tick_expiry,
+        $how_many_ticks, $forward_start,     $contract_multiplier, $product_type, $trading_window_start
     );
 
     my ($initial_bet_type) = split /_/, $shortcode;
