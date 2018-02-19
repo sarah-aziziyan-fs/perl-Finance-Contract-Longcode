@@ -78,7 +78,7 @@ sub shortcode_to_longcode {
 
     return $LONGCODES->{legacy_contract} if $params->{bet_type} eq 'Invalid';
 
-    die 'Invalid shortcode. No expiry is specified.' unless defined $params->{date_expiry} or defined $params->{tick_count};
+    defined $params->{date_expiry} or defined $params->{tick_count} or die 'Invalid shortcode. No expiry is specified.';
 
     my $underlying          = Finance::Underlying->by_symbol($params->{underlying});
     my $contract_type       = $params->{bet_type};
@@ -90,7 +90,7 @@ sub shortcode_to_longcode {
 
     my $longcode_key = lc($contract_type . '_' . $expiry_type);
 
-    die 'Could not find longcode for ' . $longcode_key unless $LONGCODES->{$longcode_key};
+    $LONGCODES->{$longcode_key} or die 'Could not find longcode for ' . $longcode_key;
 
     my @longcode = ($LONGCODES->{$longcode_key}, $underlying->display_name);
 
