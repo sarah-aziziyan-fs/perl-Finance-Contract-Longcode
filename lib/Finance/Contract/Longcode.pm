@@ -72,7 +72,7 @@ Returns an array reference of strings.
 =cut
 
 sub shortcode_to_longcode {
-    my ($shortcode) = @_;
+    my ($shortcode, $currency) = @_;
 
     my $params = shortcode_to_parameters($shortcode);
 
@@ -127,8 +127,9 @@ sub shortcode_to_longcode {
         push @longcode, [$underlying->pip_size];
     }
 
-    if ($params->{contract_multiplier}) {
-        push @longcode, $params->{contract_multiplier};
+    if ($params->{multiplier} and $currency) {
+        push @longcode, $params->{multiplier};
+        push @longcode, $currency;
     }
 
     return \@longcode;
@@ -181,6 +182,7 @@ sub shortcode_to_parameters {
         $barrier           = $8;
         $barrier2          = $9;
         $fixed_expiry      = 1 if $+{expiry_cond} eq 'F';
+
         if ($+{expiry_cond} eq 'T') {
             $tick_expiry    = 1;
             $how_many_ticks = $6;
@@ -197,14 +199,19 @@ sub shortcode_to_parameters {
                 $contract_multiplier = $11;
             }
         }
-    } elsif ($shortcode =~ /^([^_]+)_(R?_?[^_\W]+)_(\d*\.?\d*)_(\d+)_(\d+)(?<expiry_cond>[T]?)$/) {    # Contract without barrier
-        $bet_type          = $1;
-        $underlying_symbol = $2;
-        $payout            = $3;
-        $date_start        = $4;
+    } elsif ($shortcode =~ /^([^_]+)_(R?_?[^_\W]+)_(\d*\.?\d*)_(\d+)_(\d+)(?<expiry_cond>[FT]?)$/) {    # Contract without barrier
+        $bet_type            = $1;
+        $underlying_symbol   = $2;
+        $contract_multiplier = $payout = $3;
+        $date_start          = $4;
         if ($+{expiry_cond} eq 'T') {
             $tick_expiry    = 1;
             $how_many_ticks = $5;
+        } elsif ($+{expiry_cond} eq 'F') {
+            $fixed_expiry = 1;
+            $date_expiry  = $5;
+        } else {
+            $date_expiry = $5;
         }
     } elsif ($shortcode =~ /^BINARYICO_(\d+\.?\d*)_(\d+)(?:_(\d)+)?$/) {
         $bet_type                      = 'BINARYICO';
@@ -253,10 +260,10 @@ sub shortcode_to_parameters {
     }
 
     # List of lookbacks
-    my $nonbinary_list = 'LBFIXEDCALL|LBFIXEDPUT|LBFLOATCALL|LBFLOATPUT|LBHIGHLOW';
+    my $nonbinary_list = 'LBFLOATCALL|LBFLOATPUT|LBHIGHLOW';
     if ($bet_type =~ /$nonbinary_list/) {
-        $bet_parameters->{unit}                = $payout;
-        $bet_parameters->{contract_multiplier} = $contract_multiplier;
+        #    $bet_parameters->{contract_multiplier} = $contract_multiplier;
+        $bet_parameters->{multiplier} = $contract_multiplier;
     }
 
     # ICO
