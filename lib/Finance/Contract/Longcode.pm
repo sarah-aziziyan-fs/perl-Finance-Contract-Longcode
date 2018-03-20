@@ -199,6 +199,7 @@ sub shortcode_to_parameters {
         $payout            = $3;
         $date_start        = $4;
         $how_many_ticks    = $5;
+        $tick_expiry       = 1;
         $selected_tick     = $6;
     } elsif ($shortcode =~ /^([^_]+)_(R?_?[^_\W]+)_(\d*\.?\d*)_(\d+)_(\d+)(?<expiry_cond>[FT]?)$/) {    # Contract without barrier
         $bet_type            = $1;
