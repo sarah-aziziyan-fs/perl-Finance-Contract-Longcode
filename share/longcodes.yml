@@ -58,10 +58,10 @@ range_intraday_fixed_expiry: 'Win payout if [_1] stays between [_5] to [_4] thro
 upordown_daily: 'Win payout if [_1] goes outside [_5] to [_4] through [_3].'
 upordown_intraday: 'Win payout if [_1] goes outside [_5] and [_4] through [_3] after [_2].'
 upordown_intraday_fixed_expiry: 'Win payout if [_1] goes outside [_5] to [_4] through [_3].'
-resetcall_intraday: 'Win payout if [_1] is higher than or equal to [_4] at [_3] after [_2].'
-resetcall_tick: 'Win payout if [_1] after [plural,_3,%d tick,%d ticks] is strictly higher than [_4].'
-resetput_intraday: 'Win payout if [_1] is lower than or equal to [_4] at [_3] after [_2].'
-resetput_tick: 'Win payout if [_1] after [plural,_3,%d tick,%d ticks] is strictly lower than [_4].'
+resetcall_intraday: 'Win payout if [_1] after [_2] is strictly higher than it was at either entry or [_5].'
+resetcall_tick: 'Win payout if [_1] after [plural,_3,%d tick,%d ticks] is strictly higher it was at either entry or [_5].'
+resetput_intraday: 'Win payout if [_1] after [_2] is strictly lower than it was at either entry or [_5].'
+resetput_tick: 'Win payout if [_1] after [plural,_3,%d tick,%d ticks] is strictly lower than it was at either entry or [_5].'
 lbfloatcall_intraday: "Win [_6] [_5] times [_1]'s close minus low over the next [_3]."
 lbfloatcall_intraday_fixed_expiry: "Win [_6] [_5] times [_1]'s close minus low at [_3]."
 lbfloatput_intraday: "Win [_6] [_5] times [_1]'s high minus close over the next [_3]."
