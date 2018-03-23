@@ -102,16 +102,18 @@ sub shortcode_to_longcode {
             class => 'Time::Duration::Concise::Localize',
             value => $date_expiry->epoch - $date_start->epoch
         };
+        my $duration = $date_expiry->epoch - $date_start->epoch;
+        $duration = $duration + ($duration % 2);
         $when_reset = {
             class => 'Time::Duration::Concise::Localize',
-            value => ($date_expiry->epoch - $date_start->epoch) * 0.5
+            value => $duration * 0.5
         };
         $when_start = ($is_forward_starting) ? [$date_start->db_timestamp . ' GMT'] : [$LONGCODES->{contract_start_time}];
     } elsif ($expiry_type eq 'daily') {
         $when_end = [$LONGCODES->{close_on}, $date_expiry->date];
     } elsif ($expiry_type eq 'tick') {
         $when_end   = [$params->{tick_count}];
-        $when_reset = [$params->{tick_count} * 0.5];
+        $when_reset = [int($params->{tick_count} * 0.5)];
         $when_start = [$LONGCODES->{first_tick}];
     }
 
