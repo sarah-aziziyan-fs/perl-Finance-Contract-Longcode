@@ -233,12 +233,13 @@ sub shortcode_to_parameters {
         :                      ();
 
     my $bet_parameters = {
-        shortcode    => $shortcode,
-        bet_type     => $bet_type,
-        underlying   => $underlying_symbol,
-        amount_type  => 'payout',
-        amount       => $payout,
-        date_start   => $date_start,
+        shortcode   => $shortcode,
+        bet_type    => $bet_type,
+        underlying  => $underlying_symbol,
+        amount_type => 'payout',
+        amount      => $payout,
+        date_start  => $date_start,
+        ($selected_tick ? (selected_tick => $selected_tick) : ()),
         date_expiry  => $date_expiry,
         prediction   => $prediction,
         currency     => $currency,
