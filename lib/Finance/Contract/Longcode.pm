@@ -135,7 +135,7 @@ sub shortcode_to_longcode {
         push @longcode, $currency;
     }
 
-    push @longcode, $when_reset;
+    push @longcode, $when_reset if ($contract_type =~ /RESET/);
 
     return \@longcode;
 }
