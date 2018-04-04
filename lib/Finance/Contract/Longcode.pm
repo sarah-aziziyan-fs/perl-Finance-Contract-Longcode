@@ -128,6 +128,10 @@ sub shortcode_to_longcode {
         push @longcode, $currency;
     }
 
+    if ($contract_type =~ /TICK/) {
+        push @longcode, $params->{selected_tick};
+    }
+
     return \@longcode;
 }
 
