@@ -94,7 +94,7 @@ sub shortcode_to_longcode {
 
     my @longcode = ($LONGCODES->{$longcode_key}, $underlying->display_name);
 
-    my ($when_end, $when_start) = ([], []);
+    my ($when_end, $when_start, $when_reset) = ([], [], []);
     if ($expiry_type eq 'intraday_fixed_expiry') {
         $when_end = [$date_expiry->datetime . ' GMT'];
     } elsif ($expiry_type eq 'intraday') {
@@ -102,11 +102,18 @@ sub shortcode_to_longcode {
             class => 'Time::Duration::Concise::Localize',
             value => $date_expiry->epoch - $date_start->epoch
         };
+        my $duration = $date_expiry->epoch - $date_start->epoch;
+        $duration = $duration + ($duration % 2);
+        $when_reset = {
+            class => 'Time::Duration::Concise::Localize',
+            value => $duration * 0.5
+        };
         $when_start = ($is_forward_starting) ? [$date_start->db_timestamp . ' GMT'] : [$LONGCODES->{contract_start_time}];
     } elsif ($expiry_type eq 'daily') {
         $when_end = [$LONGCODES->{close_on}, $date_expiry->date];
     } elsif ($expiry_type eq 'tick') {
         $when_end   = [$params->{tick_count}];
+        $when_reset = [int($params->{tick_count} * 0.5)];
         $when_start = [$LONGCODES->{first_tick}];
     }
 
@@ -127,6 +134,8 @@ sub shortcode_to_longcode {
         push @longcode, $params->{multiplier};
         push @longcode, $currency;
     }
+
+    push @longcode, $when_reset if ($contract_type =~ /RESET/);
 
     return \@longcode;
 }
