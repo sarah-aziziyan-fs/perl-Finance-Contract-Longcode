@@ -25,6 +25,8 @@ digitmatch_tick: 'Win payout if the last digit of [_1] is [_4] after [plural,_3,
 digitodd_tick: 'Win payout if the last digit of [_1] is odd after [_3] ticks.'
 digitover_tick: 'Win payout if the last digit of [_1] is strictly higher than [_4] after [_3] ticks.'
 digitunder_tick: 'Win payout if the last digit of [_1] is strictly lower than [_4] after [_3] ticks.'
+tickhigh_tick: 'Win payout if tick [_5] of [_1] has the highest value in the next [_3] ticks.'
+ticklow_tick: 'Win payout if tick [_5] of [_1] has the lowest value in the next [_3] ticks.'
 expirymiss_daily: 'Win payout if [_1] ends outside [_5] to [_4] at [_3].'
 expirymiss_intraday: 'Win payout if [_1] ends outside [_5] to [_4] at [_3] after [_2].'
 expirymiss_intraday_fixed_expiry: 'Win payout if [_1] ends outside [_5] to [_4] at [_3].'

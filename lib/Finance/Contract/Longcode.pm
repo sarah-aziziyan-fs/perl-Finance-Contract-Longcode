@@ -135,6 +135,8 @@ sub shortcode_to_longcode {
         push @longcode, $currency;
     }
 
+    push @longcode, $params->{selected_tick} if ($contract_type =~ /TICK/);
+
     push @longcode, $when_reset if ($contract_type =~ /RESET/);
 
     return \@longcode;
@@ -159,9 +161,9 @@ sub shortcode_to_parameters {
     $is_sold //= 0;
 
     my (
-        $bet_type,       $underlying_symbol, $payout,              $date_start,   $date_expiry,
-        $barrier,        $barrier2,          $prediction,          $fixed_expiry, $tick_expiry,
-        $how_many_ticks, $forward_start,     $contract_multiplier, $product_type, $trading_window_start
+        $bet_type,            $underlying_symbol, $payout,               $date_start,  $date_expiry,    $barrier,
+        $barrier2,            $prediction,        $fixed_expiry,         $tick_expiry, $how_many_ticks, $forward_start,
+        $contract_multiplier, $product_type,      $trading_window_start, $selected_tick,
     );
 
     my ($initial_bet_type) = split /_/, $shortcode;
@@ -202,6 +204,14 @@ sub shortcode_to_parameters {
                 $contract_multiplier = $11;
             }
         }
+    } elsif ($shortcode =~ /^([^_]+)_(R?_?[^_\W]+)_(\d*\.?\d*)_(\d+)_(\d+)t_(\d+)$/) {    # TICKHIGH/TICKLOW contract type with selected tick
+        $bet_type          = $1;
+        $underlying_symbol = $2;
+        $payout            = $3;
+        $date_start        = $4;
+        $how_many_ticks    = $5;
+        $tick_expiry       = 1;
+        $selected_tick     = $6;
     } elsif ($shortcode =~ /^([^_]+)_(R?_?[^_\W]+)_(\d*\.?\d*)_(\d+)_(\d+)(?<expiry_cond>[FT]?)$/) {    # Contract without barrier
         $bet_type            = $1;
         $underlying_symbol   = $2;
@@ -234,12 +244,13 @@ sub shortcode_to_parameters {
         :                      ();
 
     my $bet_parameters = {
-        shortcode    => $shortcode,
-        bet_type     => $bet_type,
-        underlying   => $underlying_symbol,
-        amount_type  => 'payout',
-        amount       => $payout,
-        date_start   => $date_start,
+        shortcode   => $shortcode,
+        bet_type    => $bet_type,
+        underlying  => $underlying_symbol,
+        amount_type => 'payout',
+        amount      => $payout,
+        date_start  => $date_start,
+        ($selected_tick ? (selected_tick => $selected_tick) : ()),
         date_expiry  => $date_expiry,
         prediction   => $prediction,
         currency     => $currency,
