@@ -135,6 +135,11 @@ sub shortcode_to_longcode {
         push @longcode, $currency;
     }
 
+    if ($params->{bet_type} =~ /SPREAD$/){
+        push @longcode, $params->{amount};
+        push @longcode, $currency;
+    }
+
     push @longcode, $params->{selected_tick} if ($contract_type =~ /TICK/);
 
     push @longcode, $when_reset if ($contract_type =~ /RESET/);
