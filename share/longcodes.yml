@@ -25,8 +25,8 @@ digitmatch_tick: 'Win payout if the last digit of [_1] is [_4] after [plural,_3,
 digitodd_tick: 'Win payout if the last digit of [_1] is odd after [_3] ticks.'
 digitover_tick: 'Win payout if the last digit of [_1] is strictly higher than [_4] after [_3] ticks.'
 digitunder_tick: 'Win payout if the last digit of [_1] is strictly lower than [_4] after [_3] ticks.'
-tickhigh_tick: 'Win payout if tick [_5] of [_1] is the highest.'
-ticklow_tick: 'Win payout if tick [_5] of [_1] is the lowest.'
+tickhigh_tick: 'Win payout if tick [_5] of [_1] is the highest among all [_3] ticks.'
+ticklow_tick: 'Win payout if tick [_5] of [_1] is the lowest among all [_3] ticks.'
 expirymiss_daily: 'Win payout if [_1] ends outside [_5] to [_4] at [_3].'
 expirymiss_intraday: 'Win payout if [_1] ends outside [_5] to [_4] at [_3] after [_2].'
 expirymiss_intraday_fixed_expiry: 'Win payout if [_1] ends outside [_5] to [_4] at [_3].'
@@ -72,10 +72,10 @@ lbfloatput_intraday: "Win [_6] [_5] times [_1]'s high minus close over the next 
 lbfloatput_intraday_fixed_expiry: "Win [_6] [_5] times [_1]'s high minus close at [_3]."
 lbhighlow_intraday: "Win [_6] [_5] times [_1]'s high minus low over the next [_3]."
 lbhighlow_intraday_fixed_expiry: "Win [_6] [_5] times [_1]'s high minus low at [_3]."
-callspread_intraday: "Win up to [_7] [_6] if [_1]'s exit tick is between [_5] and [_4] or [_7] [_6] if it exceeds [_4] at [_3] after [_2]."
-callspread_intraday_fixed_expiry: "Win up to [_7] [_6] if [_1]'s exit tick is between [_5] and [_4] or [_7] [_6] if it exceeds [_4] at [_3]."
-callspread_daily: "Win up to [_7] [_6] if [_1]'s exit tick is between [_5] and [_4] or [_7] [_6] if it exceeds [_4] at [_3]."
-putspread_intraday: "Win up to [_7] [_6] if [_1]'s exit tick is between [_4] and [_5] or [_7] [_6] if it falls below [_5] at [_3] after [_2]."
-putspread_intraday_fixed_expiry: "Win up to [_7] [_6] if [_1]'s exit tick is between [_4] and [_5] or [_7] [_6] if it falls below [_5] at [_3]."
-putspread_daily: "Win up to [_7] [_6] if [_1]'s exit tick is between [_4] and [_5] or [_7] [_6] if it falls below [_5] at [_3]."
+callspread_intraday: "Win up to [_7] [_6] if [_1]'s exit tick is between [_5] and [_4] at [_3] after [_2]."
+callspread_intraday_fixed_expiry: "Win up to [_7] [_6] if [_1]'s exit tick is between [_5] and [_4] at [_3]."
+callspread_daily: "Win up to [_7] [_6] if [_1]'s exit tick is between [_5] and [_4] at [_3]."
+putspread_intraday: "Win up to [_7] [_6] if [_1]'s exit tick is between [_4] and [_5] at [_3] after [_2]."
+putspread_intraday_fixed_expiry: "Win up to [_7] [_6] if [_1]'s exit tick is between [_4] and [_5] at [_3]."
+putspread_daily: "Win up to [_7] [_6] if [_1]'s exit tick is between [_4] and [_5] at [_3]."
 
