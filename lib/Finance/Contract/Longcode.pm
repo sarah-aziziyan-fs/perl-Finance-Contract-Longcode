@@ -38,7 +38,6 @@ use Exporter qw(import);
 use File::ShareDir ();
 use Finance::Contract::Category;
 use Finance::Underlying;
-use Finance::Asset;
 use Format::Util::Numbers qw(formatnumber);
 use Scalar::Util qw(looks_like_number);
 use Time::Duration::Concise::Localize;
@@ -135,7 +134,7 @@ sub shortcode_to_longcode {
         push @longcode, $currency;
     }
 
-    if ($params->{bet_type} =~ /SPREAD$/){
+    if ($params->{bet_type} =~ /SPREAD$/) {
         push @longcode, $params->{amount};
         push @longcode, $currency;
     }
@@ -318,11 +317,12 @@ sub _strike_string {
     my ($string, $underlying_symbol, $contract_type_code) = @_;
 
     # do not use create_underlying because this is going to be very slow due to dependency on chronicle.
-    my $underlying = Finance::Underlying->by_symbol($underlying_symbol);
-    my $market     = Finance::Asset::Market::Registry->instance->get($underlying->market);
+    my $underlying                        = Finance::Underlying->by_symbol($underlying_symbol);
+    my $market                            = $underlying->market;
+    my $apply_absolute_barrier_multiplier = ($market eq 'forex' or $market eq 'commodities' or $market eq 'volidx');
 
     $string /= FOREX_BARRIER_MULTIPLIER
-        if ($contract_type_code !~ /^DIGIT/ and $string and looks_like_number($string) and $market->absolute_barrier_multiplier);
+        if ($contract_type_code !~ /^DIGIT/ and $string and looks_like_number($string) and $apply_absolute_barrier_multiplier);
 
     return $string;
 }
