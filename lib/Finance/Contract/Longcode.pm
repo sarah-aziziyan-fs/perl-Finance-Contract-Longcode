@@ -91,7 +91,7 @@ sub shortcode_to_longcode {
 
     $LONGCODES->{$longcode_key} or die 'Could not find longcode for ' . $longcode_key;
 
-    my @longcode = ($LONGCODES->{$longcode_key}, $underlying->display_name);
+    my @longcode = ($LONGCODES->{$longcode_key}, [$underlying->display_name]);
 
     my ($when_end, $when_start, $when_reset) = ([], [], []);
     if ($expiry_type eq 'intraday_fixed_expiry') {
