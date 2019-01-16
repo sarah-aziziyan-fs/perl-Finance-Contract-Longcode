@@ -78,4 +78,6 @@ callspread_daily: "Win up to [_7] [_6] if [_1]'s exit tick is between [_5] and [
 putspread_intraday: "Win up to [_7] [_6] if [_1]'s exit tick is between [_4] and [_5] at [_3] after [_2]."
 putspread_intraday_fixed_expiry: "Win up to [_7] [_6] if [_1]'s exit tick is between [_4] and [_5] at [_3]."
 putspread_daily: "Win up to [_7] [_6] if [_1]'s exit tick is between [_4] and [_5] at [_3]."
+runhigh_tick: "Win payout if [_1] rises successively for [plural,_3,%d tick, %d ticks] after the entry spot."
+runlow_tick: "Win payout if [_1] falls successively for [plural,_3,%d tick, %d ticks] after the entry spot."
 
