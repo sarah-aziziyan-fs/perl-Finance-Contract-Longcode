@@ -77,14 +77,17 @@ sub shortcode_to_longcode {
 
     return $LONGCODES->{legacy_contract} if $params->{bet_type} eq 'Invalid';
 
-    defined $params->{date_expiry} or defined $params->{tick_count} or die 'Invalid shortcode. No expiry is specified.';
+    defined $params->{date_expiry} or defined $params->{duration} or die 'Invalid shortcode. No expiry is specified.';
 
     my $underlying          = Finance::Underlying->by_symbol($params->{underlying});
     my $contract_type       = $params->{bet_type};
     my $is_forward_starting = $params->{starts_as_forward_starting};
     my $date_start          = Date::Utility->new($params->{date_start});
     my $date_expiry         = Date::Utility->new($params->{date_expiry});
-    my $expiry_type         = $params->{tick_expiry} ? 'tick' : $date_expiry->epoch - $date_start->epoch > SECONDS_IN_A_DAY ? 'daily' : 'intraday';
+    my $expiry_type =
+          ($params->{duration} and $params->{duration} =~ /^\d+t$/) ? 'tick'
+        : $date_expiry->epoch - $date_start->epoch > SECONDS_IN_A_DAY ? 'daily'
+        :                                                               'intraday';
     $expiry_type .= '_fixed_expiry' if $expiry_type eq 'intraday' && !$is_forward_starting && $params->{fixed_expiry};
 
     my $longcode_key = lc($contract_type . '_' . $expiry_type);
@@ -111,8 +114,9 @@ sub shortcode_to_longcode {
     } elsif ($expiry_type eq 'daily') {
         $when_end = [$LONGCODES->{close_on}, $date_expiry->date];
     } elsif ($expiry_type eq 'tick') {
-        $when_end   = [$params->{tick_count}];
-        $when_reset = [int($params->{tick_count} * 0.5)];
+        my ($tick_count) = $params->{duration} =~ /(\d+)t$/;
+        $when_end   = [$tick_count];
+        $when_reset = [int($tick_count * 0.5)];
         $when_start = [$LONGCODES->{first_tick}];
     }
 
@@ -165,11 +169,11 @@ sub shortcode_to_parameters {
     $is_sold //= 0;
 
     my (
-        $bet_type,            $underlying_symbol, $payout,               $date_start,  $date_expiry,    $barrier,
-        $barrier2,            $prediction,        $fixed_expiry,         $tick_expiry, $how_many_ticks, $forward_start,
-        $contract_multiplier, $product_type,      $trading_window_start, $selected_tick,
+        $bet_type,     $underlying_symbol, $payout,              $date_start,   $date_expiry,          $barrier, $barrier2,
+        $fixed_expiry, $duration,          $contract_multiplier, $product_type, $trading_window_start, $selected_tick,
     );
 
+    my $forward_start = 0;
     my ($initial_bet_type) = split /_/, $shortcode;
 
     my $legacy_params = {
@@ -193,8 +197,7 @@ sub shortcode_to_parameters {
         $fixed_expiry      = 1 if $+{expiry_cond} eq 'F';
 
         if ($+{expiry_cond} eq 'T') {
-            $tick_expiry    = 1;
-            $how_many_ticks = $6;
+            $duration = $6 . 't';
         } else {
             $date_expiry = $6;
         }
@@ -213,8 +216,7 @@ sub shortcode_to_parameters {
         $underlying_symbol = $2;
         $payout            = $3;
         $date_start        = $4;
-        $how_many_ticks    = $5;
-        $tick_expiry       = 1;
+        $duration          = $5 . 't';
         $selected_tick     = $6;
     } elsif ($shortcode =~ /^([^_]+)_(R?_?[^_\W]+)_(\d*\.?\d*)_(\d+)_(\d+)(?<expiry_cond>[FT]?)$/) {    # Contract without barrier
         $bet_type            = $1;
@@ -222,8 +224,7 @@ sub shortcode_to_parameters {
         $contract_multiplier = $payout = $3;
         $date_start          = $4;
         if ($+{expiry_cond} eq 'T') {
-            $tick_expiry    = 1;
-            $how_many_ticks = $5;
+            $duration = $5 . 't';
         } elsif ($+{expiry_cond} eq 'F') {
             $fixed_expiry = 1;
             $date_expiry  = $5;
@@ -255,16 +256,16 @@ sub shortcode_to_parameters {
         amount      => $payout,
         date_start  => $date_start,
         ($selected_tick ? (selected_tick => $selected_tick) : ()),
-        date_expiry  => $date_expiry,
-        prediction   => $prediction,
-        currency     => $currency,
-        fixed_expiry => $fixed_expiry,
-        tick_expiry  => $tick_expiry,
-        tick_count   => $how_many_ticks,
-        is_sold      => $is_sold,
-        ($forward_start) ? (starts_as_forward_starting => $forward_start) : (),
+        currency                   => $currency,
+        fixed_expiry               => $fixed_expiry,
+        is_sold                    => $is_sold,
+        starts_as_forward_starting => $forward_start,
         %barriers,
     };
+
+    $bet_parameters->{selected_tick} = $selected_tick if defined $selected_tick;
+    $bet_parameters->{duration}      = $duration      if $duration;
+    $bet_parameters->{date_expiry}   = $date_expiry   if $date_expiry;
 
     if ($product_type && $product_type eq 'multi_barrier') {
         $bet_parameters->{product_type}         = $product_type;
