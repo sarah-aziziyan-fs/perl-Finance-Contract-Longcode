@@ -188,9 +188,16 @@ sub shortcode_to_parameters {
 
     return $legacy_params if (not exists Finance::Contract::Category::get_all_contract_types()->{$initial_bet_type} or $shortcode =~ /_\d+H\d+/);
 
-    if ($shortcode =~
+    if ($shortcode =~ /^(MULTUP|MULTDOWN)_(R?_?[^_\W]+)_(\d*\.?\d*)_(\d+)_(\d+)_(\d+)$/) {
+        $bet_type            = $1;
+        $underlying_symbol   = $2;
+        $stake               = $3;
+        $contract_multiplier = $4;
+        $date_start          = $5;
+        $date_expiry         = $6;
+    } elsif ($shortcode =~
         /^([^_]+)_([\w\d]+)_(\d*\.?\d*)_(\d+)(?<start_cond>[F]?)_(\d+)(?<expiry_cond>[FT]?)_(S?-?\d+P?)_(S?-?\d+P?)(?:_(?<extra>[PM])(\d*\.?\d+))?$/)
-    {                               # Both purchase and expiry date are timestamp (e.g. a 30-min bet)
+    {    # Both purchase and expiry date are timestamp (e.g. a 30-min bet)
         $bet_type          = $1;
         $underlying_symbol = $2;
         $payout            = $3;
@@ -215,13 +222,6 @@ sub shortcode_to_parameters {
                 $contract_multiplier = $11;
             }
         }
-    } elsif ($shortcode =~ /^(MULTUP|MULTDOWN)_(R?_?[^_\W]+)_(\d*\.?\d*)_(\d+)_(\d+)_(\d+)$/) {
-        $bet_type            = $1;
-        $underlying_symbol   = $2;
-        $stake               = $3;
-        $contract_multiplier = $4;
-        $date_start          = $5;
-        $barrier             = $7;
     } elsif ($shortcode =~ /^([^_]+)_(R?_?[^_\W]+)_(\d*\.?\d*)_(\d+)_(\d+)t_(\d+)$/) {    # TICKHIGH/TICKLOW contract type with selected tick
         $bet_type          = $1;
         $underlying_symbol = $2;
