@@ -9,6 +9,10 @@ our $VERSION = '0.001';
 
 Finance::Contract::Longcode - contains utility functions to convert a binary.com's shortcode to human readable longcode and shortcode to a hash reference parameters.
 
+=head1 VERSION
+
+version 0.001
+
 =head1 SYNOPSIS
 
     use Finance::Contract::Longcode qw(shortcode_to_longcode);
@@ -77,7 +81,7 @@ sub shortcode_to_longcode {
 
     return $LONGCODES->{legacy_contract} if $params->{bet_type} eq 'Invalid';
 
-    defined $params->{date_expiry} or defined $params->{duration} or die 'Invalid shortcode. No expiry is specified.';
+    defined $params->{date_expiry} or defined $params->{duration} or die 'Invalid shortcode. No expiry is specified. ' . $shortcode;
 
     my $underlying          = Finance::Underlying->by_symbol($params->{underlying});
     my $contract_type       = $params->{bet_type};
@@ -228,7 +232,7 @@ sub shortcode_to_parameters {
     } elsif ($shortcode =~ /^([^_]+)_(R?_?[^_\W]+)_(\d*\.?\d*)_(\d+)_(\d+)(?<expiry_cond>[FT]?)$/) {    # Contract without barrier
         $bet_type          = $1;
         $underlying_symbol = $2;
-        if ($bet_type =~ /(?:LBFLOATCALL|LBFLOATPUT|LBHIGHLOW)/) {
+        if (grep { $bet_type eq $_ } qw(LBFLOATCALL LBFLOATPUT LBHIGHLOW)) {
             $contract_multiplier = $3;
         } else {
             $payout = $3;
