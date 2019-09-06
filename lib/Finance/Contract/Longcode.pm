@@ -226,10 +226,14 @@ sub shortcode_to_parameters {
         $duration          = $5 . 't';
         $selected_tick     = $6;
     } elsif ($shortcode =~ /^([^_]+)_(R?_?[^_\W]+)_(\d*\.?\d*)_(\d+)_(\d+)(?<expiry_cond>[FT]?)$/) {    # Contract without barrier
-        $bet_type            = $1;
-        $underlying_symbol   = $2;
-        $contract_multiplier = $payout = $3;
-        $date_start          = $4;
+        $bet_type          = $1;
+        $underlying_symbol = $2;
+        if ($bet_type =~ /(?:LBFLOATCALL|LBFLOATPUT|LBHIGHLOW)/) {
+            $contract_multiplier = $3;
+        } else {
+            $payout = $3;
+        }
+        $date_start = $4;
         if ($+{expiry_cond} eq 'T') {
             $duration = $5 . 't';
         } elsif ($+{expiry_cond} eq 'F') {
