@@ -275,7 +275,7 @@ sub shortcode_to_parameters {
     # List of lookbacks
     my $nonbinary_list = 'LBFLOATCALL|LBFLOATPUT|LBHIGHLOW';
     if ($bet_type =~ /$nonbinary_list/) {
-        $bet_parameters->{multiplier}  = $contract_multiplier;
+        $bet_parameters->{multiplier} = $contract_multiplier;
         delete $bet_parameters->{amount_type};
     }
 
