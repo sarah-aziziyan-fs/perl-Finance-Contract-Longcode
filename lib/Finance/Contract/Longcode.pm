@@ -196,7 +196,7 @@ sub shortcode_to_parameters {
         $contract_multiplier = $4;
         $date_start          = $5;
         $date_expiry         = $6;
-        $deal_cancellation - $7;
+        $deal_cancellation   = $7;
     } elsif ($shortcode =~
         /^([^_]+)_([\w\d]+)_(\d*\.?\d*)_(\d+)(?<start_cond>[F]?)_(\d+)(?<expiry_cond>[FT]?)_(S?-?\d+P?)_(S?-?\d+P?)(?:_(?<extra>[PM])(\d*\.?\d+))?$/)
     {    # Both purchase and expiry date are timestamp (e.g. a 30-min bet)
