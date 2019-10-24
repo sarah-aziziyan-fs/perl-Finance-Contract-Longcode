@@ -320,7 +320,7 @@ sub _strike_string {
     # do not use create_underlying because this is going to be very slow due to dependency on chronicle.
     my $underlying                        = Finance::Underlying->by_symbol($underlying_symbol);
     my $market                            = $underlying->market;
-    my $apply_absolute_barrier_multiplier = ($market eq 'forex' or $market eq 'commodities' or $market eq 'synthetic_index');
+    my $apply_absolute_barrier_multiplier = ($market eq 'forex' or $market eq 'commodities' or $market eq 'volidx');
 
     $string /= FOREX_BARRIER_MULTIPLIER
         if ($contract_type_code !~ /^DIGIT/ and $string and looks_like_number($string) and $apply_absolute_barrier_multiplier);
