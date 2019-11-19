@@ -175,6 +175,7 @@ sub shortcode_to_parameters {
     my (
         $bet_type,     $underlying_symbol, $payout,              $date_start,   $date_expiry,          $barrier,       $barrier2,
         $fixed_expiry, $duration,          $contract_multiplier, $product_type, $trading_window_start, $selected_tick, $stake,
+        $deal_cancellation
     );
 
     my $forward_start = 0;
@@ -188,13 +189,14 @@ sub shortcode_to_parameters {
 
     return $legacy_params if (not exists Finance::Contract::Category::get_all_contract_types()->{$initial_bet_type} or $shortcode =~ /_\d+H\d+/);
 
-    if ($shortcode =~ /^(MULTUP|MULTDOWN)_(R?_?[^_\W]+)_(\d*\.?\d*)_(\d+)_(\d+)_(\d+)$/) {
+    if ($shortcode =~ /^(MULTUP|MULTDOWN)_(R?_?[^_\W]+)_(\d*\.?\d*)_(\d+)_(\d+)_(\d+)_(\d)$/) {
         $bet_type            = $1;
         $underlying_symbol   = $2;
         $stake               = $3;
         $contract_multiplier = $4;
         $date_start          = $5;
         $date_expiry         = $6;
+        $deal_cancellation   = $7;
     } elsif ($shortcode =~
         /^([^_]+)_([\w\d]+)_(\d*\.?\d*)_(\d+)(?<start_cond>[F]?)_(\d+)(?<expiry_cond>[FT]?)_(S?-?\d+P?)_(S?-?\d+P?)(?:_(?<extra>[PM])(\d*\.?\d+))?$/)
     {    # Both purchase and expiry date are timestamp (e.g. a 30-min bet)
@@ -294,6 +296,10 @@ sub shortcode_to_parameters {
     if ($product_type && $product_type eq 'multi_barrier') {
         $bet_parameters->{product_type}         = $product_type;
         $bet_parameters->{trading_period_start} = $trading_window_start;
+    }
+
+    if (defined $deal_cancellation) {
+        $bet_parameters->{deal_cancellation} = 1;
     }
 
     return $bet_parameters;
