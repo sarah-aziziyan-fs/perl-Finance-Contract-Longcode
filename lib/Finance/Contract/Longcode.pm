@@ -189,7 +189,7 @@ sub shortcode_to_parameters {
 
     return $legacy_params if (not exists Finance::Contract::Category::get_all_contract_types()->{$initial_bet_type} or $shortcode =~ /_\d+H\d+/);
 
-    if ($shortcode =~ /^(MULTUP|MULTDOWN)_(R?_?[^_\W]+)_(\d*\.?\d*)_(\d+)_(\d+)_(\d+)_(\d+)$/) {
+    if ($shortcode =~ /^(MULTUP|MULTDOWN)_(R?_?[^_\W]+)_(\d*\.?\d*)_(\d+)_(\d+)_(\d+)_(\d)$/) {
         $bet_type            = $1;
         $underlying_symbol   = $2;
         $stake               = $3;
@@ -298,7 +298,7 @@ sub shortcode_to_parameters {
         $bet_parameters->{trading_period_start} = $trading_window_start;
     }
 
-    if ($deal_cancellation) {
+    if (defined $deal_cancellation) {
         $bet_parameters->{deal_cancellation} = $deal_cancellation;
     }
 
@@ -343,7 +343,7 @@ sub _strike_string {
     # do not use create_underlying because this is going to be very slow due to dependency on chronicle.
     my $underlying                        = Finance::Underlying->by_symbol($underlying_symbol);
     my $market                            = $underlying->market;
-    my $apply_absolute_barrier_multiplier = ($market eq 'forex' or $market eq 'commodities' or $market eq 'volidx');
+    my $apply_absolute_barrier_multiplier = ($market eq 'forex' or $market eq 'commodities' or $market eq 'synthetic_index');
 
     $string /= FOREX_BARRIER_MULTIPLIER
         if ($contract_type_code !~ /^DIGIT/ and $string and looks_like_number($string) and $apply_absolute_barrier_multiplier);
