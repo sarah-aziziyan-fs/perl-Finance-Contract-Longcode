@@ -9,6 +9,10 @@ our $VERSION = '0.001';
 
 Finance::Contract::Longcode - contains utility functions to convert a binary.com's shortcode to human readable longcode and shortcode to a hash reference parameters.
 
+=head1 VERSION
+
+version 0.001
+
 =head1 SYNOPSIS
 
     use Finance::Contract::Longcode qw(shortcode_to_longcode);
@@ -77,7 +81,7 @@ sub shortcode_to_longcode {
 
     return $LONGCODES->{legacy_contract} if $params->{bet_type} eq 'Invalid';
 
-    defined $params->{date_expiry} or defined $params->{duration} or die 'Invalid shortcode. No expiry is specified.';
+    defined $params->{date_expiry} or defined $params->{duration} or die 'Invalid shortcode. No expiry is specified. ' . $shortcode;
 
     my $underlying          = Finance::Underlying->by_symbol($params->{underlying});
     my $contract_type       = $params->{bet_type};
@@ -169,8 +173,8 @@ sub shortcode_to_parameters {
     $is_sold //= 0;
 
     my (
-        $bet_type,     $underlying_symbol, $payout,              $date_start,   $date_expiry,          $barrier, $barrier2,
-        $fixed_expiry, $duration,          $contract_multiplier, $product_type, $trading_window_start, $selected_tick,
+        $bet_type,     $underlying_symbol, $payout,              $date_start,   $date_expiry,          $barrier,       $barrier2,
+        $fixed_expiry, $duration,          $contract_multiplier, $product_type, $trading_window_start, $selected_tick, $stake,
     );
 
     my $forward_start = 0;
@@ -184,9 +188,16 @@ sub shortcode_to_parameters {
 
     return $legacy_params if (not exists Finance::Contract::Category::get_all_contract_types()->{$initial_bet_type} or $shortcode =~ /_\d+H\d+/);
 
-    if ($shortcode =~
+    if ($shortcode =~ /^(MULTUP|MULTDOWN)_(R?_?[^_\W]+)_(\d*\.?\d*)_(\d+)_(\d+)_(\d+)$/) {
+        $bet_type            = $1;
+        $underlying_symbol   = $2;
+        $stake               = $3;
+        $contract_multiplier = $4;
+        $date_start          = $5;
+        $date_expiry         = $6;
+    } elsif ($shortcode =~
         /^([^_]+)_([\w\d]+)_(\d*\.?\d*)_(\d+)(?<start_cond>[F]?)_(\d+)(?<expiry_cond>[FT]?)_(S?-?\d+P?)_(S?-?\d+P?)(?:_(?<extra>[PM])(\d*\.?\d+))?$/)
-    {                               # Both purchase and expiry date are timestamp (e.g. a 30-min bet)
+    {    # Both purchase and expiry date are timestamp (e.g. a 30-min bet)
         $bet_type          = $1;
         $underlying_symbol = $2;
         $payout            = $3;
@@ -219,10 +230,14 @@ sub shortcode_to_parameters {
         $duration          = $5 . 't';
         $selected_tick     = $6;
     } elsif ($shortcode =~ /^([^_]+)_(R?_?[^_\W]+)_(\d*\.?\d*)_(\d+)_(\d+)(?<expiry_cond>[FT]?)$/) {    # Contract without barrier
-        $bet_type            = $1;
-        $underlying_symbol   = $2;
-        $contract_multiplier = $payout = $3;
-        $date_start          = $4;
+        $bet_type          = $1;
+        $underlying_symbol = $2;
+        if (grep { $bet_type eq $_ } qw(LBFLOATCALL LBFLOATPUT LBHIGHLOW)) {
+            $contract_multiplier = $3;
+        } else {
+            $payout = $3;
+        }
+        $date_start = $4;
         if ($+{expiry_cond} eq 'T') {
             $duration = $5 . 't';
         } elsif ($+{expiry_cond} eq 'F') {
@@ -249,12 +264,10 @@ sub shortcode_to_parameters {
         :                      ();
 
     my $bet_parameters = {
-        shortcode   => $shortcode,
-        bet_type    => $bet_type,
-        underlying  => $underlying_symbol,
-        amount_type => 'payout',
-        amount      => $payout,
-        date_start  => $date_start,
+        shortcode  => $shortcode,
+        bet_type   => $bet_type,
+        underlying => $underlying_symbol,
+        date_start => $date_start,
         ($selected_tick ? (selected_tick => $selected_tick) : ()),
         currency                   => $currency,
         fixed_expiry               => $fixed_expiry,
@@ -263,20 +276,24 @@ sub shortcode_to_parameters {
         %barriers,
     };
 
-    $bet_parameters->{selected_tick} = $selected_tick if defined $selected_tick;
-    $bet_parameters->{duration}      = $duration      if $duration;
-    $bet_parameters->{date_expiry}   = $date_expiry   if $date_expiry;
+    $bet_parameters->{selected_tick} = $selected_tick       if defined $selected_tick;
+    $bet_parameters->{duration}      = $duration            if $duration;
+    $bet_parameters->{date_expiry}   = $date_expiry         if $date_expiry;
+    $bet_parameters->{multiplier}    = $contract_multiplier if defined $contract_multiplier;
+
+    if (defined $payout) {
+        $bet_parameters->{amount_type} = 'payout';
+        $bet_parameters->{amount}      = $payout;
+    }
+
+    if (defined $stake) {
+        $bet_parameters->{amount_type} = 'stake';
+        $bet_parameters->{amount}      = $stake;
+    }
 
     if ($product_type && $product_type eq 'multi_barrier') {
         $bet_parameters->{product_type}         = $product_type;
         $bet_parameters->{trading_period_start} = $trading_window_start;
-    }
-
-    # List of lookbacks
-    my $nonbinary_list = 'LBFLOATCALL|LBFLOATPUT|LBHIGHLOW';
-    if ($bet_type =~ /$nonbinary_list/) {
-        $bet_parameters->{multiplier} = $contract_multiplier;
-        delete $bet_parameters->{amount_type};
     }
 
     return $bet_parameters;

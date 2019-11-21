@@ -80,4 +80,6 @@ putspread_intraday_fixed_expiry: "Win up to [_7] [_6] if [_1]'s exit tick is bet
 putspread_daily: "Win up to [_7] [_6] if [_1]'s exit tick is between [_4] and [_5] at [_3]."
 runhigh_tick: "Win payout if [_1] rises successively for [plural,_3,%d tick, %d ticks] after the entry spot."
 runlow_tick: "Win payout if [_1] falls successively for [plural,_3,%d tick, %d ticks] after the entry spot."
+multup_daily: "Win [_5]% of your stake for every 1% rise in the market price."
+multdown_daily: "Win [_5]% of your stake for every 1% fall in the market price."
 
