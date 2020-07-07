@@ -161,16 +161,13 @@ Converts shortcode to a hash reference parameters. Requires shortcode.
 Optional parameters:
 
 - currency is provided if you wish to have a complete list of parameters to create a contract.
-- is_sold is to indicate of a contract is sold.
 
 Returns a hash reference.
 
 =cut
 
 sub shortcode_to_parameters {
-    my ($shortcode, $currency, $is_sold) = @_;
-
-    $is_sold //= 0;
+    my ($shortcode, $currency) = @_;
 
     my (
         $bet_type,      $underlying_symbol, $payout,       $date_start,          $date_expiry,  $barrier,
@@ -274,7 +271,6 @@ sub shortcode_to_parameters {
         ($selected_tick ? (selected_tick => $selected_tick) : ()),
         currency                   => $currency,
         fixed_expiry               => $fixed_expiry,
-        is_sold                    => $is_sold,
         starts_as_forward_starting => $forward_start,
         %barriers,
     };
