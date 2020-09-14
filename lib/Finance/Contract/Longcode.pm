@@ -214,11 +214,7 @@ sub shortcode_to_parameters {
         }
 
         if ($+{extra}) {
-            # predefined trading window start
-            if ($+{extra} eq 'P') {
-                $product_type         = 'multi_barrier';
-                $trading_window_start = $11;
-            } elsif ($+{extra} eq 'M') {    # multiplier for lookback contracts
+            if ($+{extra} eq 'M') {    # multiplier for lookback contracts
                 $contract_multiplier = $11;
             }
         }
@@ -288,11 +284,6 @@ sub shortcode_to_parameters {
     if (defined $stake) {
         $bet_parameters->{amount_type} = 'stake';
         $bet_parameters->{amount}      = $stake;
-    }
-
-    if ($product_type && $product_type eq 'multi_barrier') {
-        $bet_parameters->{product_type}         = $product_type;
-        $bet_parameters->{trading_period_start} = $trading_window_start;
     }
 
     if (defined $cancellation) {
