@@ -335,7 +335,7 @@ sub _strike_string {
     my $apply_absolute_barrier_multiplier = ($market eq 'forex' or $market eq 'commodities' or $market eq 'synthetic_index');
 
     $string /= FOREX_BARRIER_MULTIPLIER
-        if ($contract_type_code !~ /^DIGIT/ and $string and looks_like_number($string) and $apply_absolute_barrier_multiplier);
+        if (index($contract_type_code, 'DIGIT') != 0 and $string and looks_like_number($string) and $apply_absolute_barrier_multiplier);
 
     return $string;
 }
