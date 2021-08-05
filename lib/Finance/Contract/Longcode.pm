@@ -291,6 +291,21 @@ sub shortcode_to_parameters {
         $bet_parameters->{cancellation_tp} = $cancellation_tp;
     }
 
+    if($bet_parameters->{duration} && $bet_parameters->{duration} =~ m/\d*(t|T)/g){
+        $bet_parameters->{duration_type} = "ticks";
+    }elsif($bet_parameters->{date_expiry}){
+        my $duration = $bet_parameters->{date_expiry} - $bet_parameters->{date_start};
+        if($duration<60){
+            $bet_parameters->{duration_type} = "seconds";
+        }elsif($duration>=60 && $duration<3600){
+            $bet_parameters->{duration_type} = "minutes";
+        }elsif($duration>=3600 && $duration<86400){
+            $bet_parameters->{duration_type} = "hours";
+        }else{
+            $bet_parameters->{duration_type} = "days";
+        }
+    }
+
     return $bet_parameters;
 }
 
