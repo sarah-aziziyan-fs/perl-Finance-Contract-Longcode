@@ -297,6 +297,14 @@ sub shortcode_to_parameters {
     return $bet_parameters;
 }
 
+=head2 get_duration_type
+
+calculates duration_type from bet_params
+
+Returns a duration_type if can calculate it, unless returns undef
+
+=cut
+
 sub get_duration_type {
     my $params = shift;
 
