@@ -179,9 +179,10 @@ sub shortcode_to_parameters {
     my ($initial_bet_type) = split /_/, $shortcode;
 
     my $legacy_params = {
-        bet_type   => 'Invalid',    # it doesn't matter what it is if it is a legacy
-        underlying => 'config',
-        currency   => $currency,
+        bet_type        => 'Invalid',    # it doesn't matter what it is if it is a legacy
+        underlying      => 'config',
+        currency        => $currency,
+        duration_type   => '',
     };
 
     return $legacy_params if (not exists Finance::Contract::Category::get_all_contract_types()->{$initial_bet_type} or $shortcode =~ /_\d+H\d+/);
@@ -291,22 +292,21 @@ sub shortcode_to_parameters {
         $bet_parameters->{cancellation_tp} = $cancellation_tp;
     }
 
-    if($bet_parameters->{duration} && $bet_parameters->{duration} =~ m/\d*(t|T)/g){
-        $bet_parameters->{duration_type} = "ticks";
-    }elsif($bet_parameters->{date_expiry}){
-        my $duration = $bet_parameters->{date_expiry} - $bet_parameters->{date_start};
-        if($duration<60){
-            $bet_parameters->{duration_type} = "seconds";
-        }elsif($duration>=60 && $duration<3600){
-            $bet_parameters->{duration_type} = "minutes";
-        }elsif($duration>=3600 && $duration<86400){
-            $bet_parameters->{duration_type} = "hours";
-        }else{
-            $bet_parameters->{duration_type} = "days";
-        }
-    }
+    $bet_parameters->{duration_type} = get_duration_type($bet_parameters) // '';
 
     return $bet_parameters;
+}
+
+sub get_duration_type {
+    my $params = shift;
+
+    return "ticks"   if $params->{duration} && $params->{duration} =~ m/\d*t/ig;
+    return undef     unless $params->{date_expiry};
+    my $duration  =  $params->{date_expiry} - $params->{date_start};
+    return "seconds" if $duration<60;
+    return "minutes" if $duration>=60 && $duration<3600;
+    return "hours"   if $duration>=3600 && $duration<86400;
+    return "days";
 }
 
 ## INTERNAL METHODS ##
