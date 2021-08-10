@@ -292,7 +292,7 @@ sub shortcode_to_parameters {
         $bet_parameters->{cancellation_tp} = $cancellation_tp;
     }
 
-    $bet_parameters->{duration_type} = get_duration_type($bet_parameters) // '';
+    $bet_parameters->{duration_type} = get_duration_type($bet_parameters);
 
     return $bet_parameters;
 }
