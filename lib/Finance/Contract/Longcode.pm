@@ -308,7 +308,7 @@ Returns a duration_type if can calculate it, unless returns undef
 sub get_duration_type {
     my $params = shift;
 
-    return "ticks"   if $params->{duration} && $params->{duration} =~ m/\d*t/ig;
+    return "ticks"   if $params->{duration} && $params->{duration} =~ /^\d+t$/;
     return undef     unless $params->{date_expiry};
     my $duration  =  $params->{date_expiry} - $params->{date_start};
     return "seconds" if $duration<60;
