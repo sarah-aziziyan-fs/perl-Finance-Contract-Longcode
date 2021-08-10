@@ -50,6 +50,8 @@ use YAML::XS qw(LoadFile);
 our @EXPORT_OK = qw(shortcode_to_longcode shortcode_to_parameters get_longcodes);
 
 use constant {
+    SECONDS_IN_A_MINUTE      => 60;
+    SECONDS_IN_AN_HOUR       => 3600,
     SECONDS_IN_A_DAY         => 86400,
     FOREX_BARRIER_MULTIPLIER => 1e6,
 };
@@ -311,9 +313,9 @@ sub get_duration_type {
     return "ticks"   if $params->{duration} && $params->{duration} =~ m/\d*t/ig;
     return undef     unless $params->{date_expiry};
     my $duration  =  $params->{date_expiry} - $params->{date_start};
-    return "seconds" if $duration<60;
-    return "minutes" if $duration>=60 && $duration<3600;
-    return "hours"   if $duration>=3600 && $duration<86400;
+    return "seconds" if $duration<SECONDS_IN_A_MINUTE;
+    return "minutes" if $duration>=SECONDS_IN_A_MINUTE && $duration<SECONDS_IN_AN_HOUR;
+    return "hours"   if $duration>=SECONDS_IN_AN_HOUR && $duration<SECONDS_IN_A_DAY;
     return "days";
 }
 
